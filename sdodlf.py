@@ -43,8 +43,11 @@ model.fit(X, Y_proxy)
 
 # 5. 🧮 예측 weight 계산
 raw_pred = model.predict(X)
-pred_weights = 1/(raw_pred+1e-06)
+pred_weights = 1 / (raw_pred + 1e-6)
+
+# index는 그대로 숫자 ID (예: 1, 2, 3...)
 df_pred_weights = pd.DataFrame(pred_weights, index=common_ids, columns=["Pred_Weight"])
+df_pred_weights = df_pred_weights.reset_index().rename(columns={"index": "Patient_N"})
 
 feature_cols = df_enhanced.drop(columns=["Label", "Patient_N"]).columns.tolist()
 
@@ -72,9 +75,8 @@ for seed in range(30):
     df_train = df_enhanced[df_enhanced["Patient_N"].isin(train_patients)]
     df_test = df_enhanced[df_enhanced["Patient_N"].isin(test_patients)]
 
-    df_train = df_train.merge(df_weights[["Patient_N", "Pred_Weight"]], on="Patient_N", how="left")
+    df_train = df_train.merge(df_pred_weights, on="Patient_N", how="left")
     df_train["Pred_Weight"] = df_train["Pred_Weight"].fillna(1.0)
-
 
     # 3. Feature & Label 분리
     scaler = StandardScaler()
