@@ -52,7 +52,10 @@ df_pred_weights = df_pred_weights.reset_index().rename(columns={"index": "Patien
 feature_cols = df_enhanced.drop(columns=["Label", "Patient_N"]).columns.tolist()
 
 # 1. 환자 ID 목록
-unique_patients = df_enhanced["Patient_N"].unique()
+valid_ids = df_enhanced["Patient_N"].unique()
+
+# 2. df_pred_weights에서 그 환자만 남기기
+df_pred_weights = df_pred_weights[df_pred_weights["Patient_N"].isin(valid_ids)]
 
 # 미리 metric 이름 설정
 metrics = ["Accuracy", "Precision", "Recall", "F1 Score", "ROC AUC"]
