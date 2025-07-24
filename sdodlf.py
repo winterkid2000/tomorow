@@ -72,8 +72,8 @@ for seed in range(30):
     df_train = df_enhanced[df_enhanced["Patient_N"].isin(train_patients)]
     df_test = df_enhanced[df_enhanced["Patient_N"].isin(test_patients)]
 
-    df_train = df_train.merge(df_weights[["Patient_N", "Final_weight"]], on="Patient_N", how="left")
-    df_train["Final_weight"] = df_train["Final_weight"].fillna(1.0)
+    df_train = df_train.merge(df_weights[["Patient_N", "Pred_Weight"]], on="Patient_N", how="left")
+    df_train["Pred_Weight"] = df_train["Pred_Weight"].fillna(1.0)
 
 
     # 3. Feature & Label 분리
@@ -91,7 +91,7 @@ for seed in range(30):
     X_train = torch.tensor(X_train, dtype=torch.float32)
     y_train = torch.tensor(y_train, dtype=torch.float32).unsqueeze(1)
     # --- 가중치 텐서로 변환 ---
-    train_weights = torch.tensor(df_train["Final_weight"].values, dtype=torch.float32).unsqueeze(1).to(device)
+    train_weights = torch.tensor(df_train["Pred_Weight"].values, dtype=torch.float32).unsqueeze(1).to(device)
 
     X_test = torch.tensor(X_test, dtype=torch.float32)
     y_test = torch.tensor(y_test, dtype=torch.float32).unsqueeze(1)
