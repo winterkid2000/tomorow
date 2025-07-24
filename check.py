@@ -30,6 +30,7 @@ pred_weights = 1 / (raw_pred + 1e-6)
 # 5. weight 데이터프레임 구성
 df_pred_weights = pd.DataFrame(pred_weights, index=common_ids, columns=["Pred_Weight"])
 df_pred_weights = df_pred_weights.reset_index().rename(columns={"index": "Patient_N"})
+df_pred_weights.to_excel("weigh_check.xlsx", index=False)
 
 # 6. Patient ID 타입 통일 (정수형)
 df_enhanced["Patient_N"] = df_enhanced["Patient_N"].astype(int)
@@ -38,6 +39,8 @@ df_pred_weights["Patient_N"] = df_pred_weights["Patient_N"].astype(int)
 # 7. train/test split & weight 매핑 확인
 seed = 42
 unique_patients = df_enhanced["Patient_N"].unique()
+valid_ids = df_enhanced["Patient_N"].unique()
+df_pred_weights = df_pred_weights[df_pred_weights["Patient_N"].isin(valid_ids)]
 train_patients, test_patients = train_test_split(unique_patients, test_size=0.2, random_state=seed)
 
 df_train = df_enhanced[df_enhanced["Patient_N"].isin(train_patients)]
